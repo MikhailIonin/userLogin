@@ -7,30 +7,33 @@
 
 import UIKit
 
-let userName = "User"
-let userPassword = "123"
+
 
 class LoginViewController: UIViewController {
 
     @IBOutlet var userNameTF: UITextField!
     @IBOutlet var passwordTF: UITextField!
     
+    private let userName = "User"
+    private let userPassword = "123"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+        let welcomeVC = segue.destination as! WelcomeViewController
         welcomeVC.userName = userNameTF.text
     }
 
-    @IBAction func logInAction(_ sender: Any) {
+    @IBAction func logInAction() {
         
         if userNameTF.text == userName && passwordTF.text == userPassword {
             print("Access granted")
+            
+            performSegue(withIdentifier: "showWelcomeViewController", sender: nil)
         } else {
-            showAlert(with: "Wrong!", and: "Access denied")
+            showAlert(with: "Invalid login or password", and: "Please, enter correct login and password")
             userNameTF.text = ""
             passwordTF.text = ""
         }
@@ -46,7 +49,6 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func unwind(for unwindSegue: UIStoryboardSegue) {
-        guard let welcomeVC = unwindSegue.source as? WelcomeViewController else { return }
         userNameTF.text = ""
         passwordTF.text = ""
     }
@@ -62,5 +64,22 @@ extension LoginViewController {
         }
         alert.addAction(okAction)
         present(alert, animated: true)
+    }
+}
+
+// MARK: - Work with keyboard
+extension LoginViewController: UITextFieldDelegate {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == userNameTF {
+            passwordTF.becomeFirstResponder()
+        } else {
+            logInAction()
+        }
+        return true
     }
 }
