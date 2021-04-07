@@ -11,27 +11,31 @@ import UIKit
 
 class LoginViewController: UIViewController {
 
+    //MARK: IB Outlets
     @IBOutlet var userNameTF: UITextField!
     @IBOutlet var passwordTF: UITextField!
     
-    private let userName = "User"
-    private let userPassword = "123"
+    //MARK: Private properties
+//    private let userName = "User"
+//    private let userPassword = "123"
+    private let user = User.getUserData()
     
+    //MARK:
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let welcomeVC = segue.destination as! WelcomeViewController
-        welcomeVC.userName = userNameTF.text
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        let welcomeVC = segue.destination as! WelcomeViewController
+//        welcomeVC.userName = userNameTF.text
+//    }
 
     @IBAction func logInAction() {
         
-        if userNameTF.text == userName && passwordTF.text == userPassword {
+        if userNameTF.text == user.login && passwordTF.text == user.password {
             print("Access granted")
             
-            performSegue(withIdentifier: "showWelcomeViewController", sender: nil)
+            performSegue(withIdentifier: "showTabViewController", sender: nil)
         } else {
             showAlert(with: "Invalid login or password", and: "Please, enter correct login and password")
             userNameTF.text = ""
