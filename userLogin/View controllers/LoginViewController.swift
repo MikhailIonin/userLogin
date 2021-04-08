@@ -7,8 +7,6 @@
 
 import UIKit
 
-
-
 class LoginViewController: UIViewController {
 
     //MARK: IB Outlets
@@ -16,25 +14,26 @@ class LoginViewController: UIViewController {
     @IBOutlet var passwordTF: UITextField!
     
     //MARK: Private properties
-//    private let userName = "User"
-//    private let userPassword = "123"
     private let user = User.getUserData()
     
-    //MARK:
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
+    //MARK: Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let tabBarController = segue.destination as? UITabBarController else { return }
+        guard let viewContollers = tabBarController.viewControllers else { return }
     
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        let welcomeVC = segue.destination as! WelcomeViewController
-//        welcomeVC.userName = userNameTF.text
-//    }
-
+        viewContollers.forEach {
+            if let welcomeVC = $0 as? WelcomeViewController {
+                welcomeVC.user = user
+            } else if let navigationVC = $0 as? UINavigationController {
+                let userInfoVC = navigationVC.topViewController as! UserInfoViewController
+                userInfoVC.user = user
+            }
+        }
+    }
+   
+    //MARK: IB Actions
     @IBAction func logInAction() {
-        
         if userNameTF.text == user.login && passwordTF.text == user.password {
-            print("Access granted")
-            
             performSegue(withIdentifier: "showTabViewController", sender: nil)
         } else {
             showAlert(with: "Invalid login or password", and: "Please, enter correct login and password")
@@ -53,12 +52,11 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func unwind(for unwindSegue: UIStoryboardSegue) {
-        userNameTF.text = ""
-        passwordTF.text = ""
+        userNameTF.text = nil
+        passwordTF.text = nil
     }
-    
-}
 
+}
 // MARK: Alert controller
 extension LoginViewController {
     private func showAlert(with title: String, and message: String) {
@@ -87,3 +85,5 @@ extension LoginViewController: UITextFieldDelegate {
         return true
     }
 }
+
+
